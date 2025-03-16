@@ -3,6 +3,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer # used for data tran
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler # used for data transformation
 from sklearn.metrics.pairwise import cosine_similarity
 
+from models.anime import Anime
+
 '''
 The dataset used here can be found online via kaggle repository at
 https://www.kaggle.com/datasets/CooperUnion/anime-recommendations-database 
@@ -24,6 +26,10 @@ class Recommender:
         self.data_transformation()
         self.build_similarity_matrix()
 
+        # a hashmap where the key is the id and the value is a reference to the Anime
+        self.data_hashmap = {
+            record['anime_id']: Anime(record) for record in self.original_data.to_dict('records')
+        }
 
     def init_data(self):
         self.original_data = pd.read_csv("./dataset/anime.csv")
@@ -81,7 +87,7 @@ class Recommender:
         feature_matrix = self.data.to_numpy()
 
         # calculating cosine similarity
-        self.__consine_sim = cosine_similarity(feature_matrix)
+        self.__cosine_sim = cosine_similarity(feature_matrix)
 
     def recommend(self, index, top_n=5):
         # get similarity scores for the given anime against all other animes

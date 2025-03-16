@@ -38,6 +38,24 @@ def get_data():
         'data': anime_objects
     })
 
+@app.route('/recommend/<int:anime_id>', methods=['GET'])
+def get_recommendations(anime_id):
+    recommendations = recommender.recommend(anime_id)
+
+    # getting the current object through its hashed version
+    current = recommender.data_hashmap[anime_id].to_json()
+    processed_recommendations = []
+
+    for recommendation in recommendations:
+        processed_recommendations.append(
+            recommender.data_hashmap[recommendation[0]].to_json()
+        )
+
+    return jsonify({
+        'anime': current,
+        'recommendations': processed_recommendations
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True)
