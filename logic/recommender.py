@@ -89,7 +89,9 @@ class Recommender:
         # calculating cosine similarity
         self.__cosine_sim = cosine_similarity(feature_matrix)
 
-    def recommend(self, index, top_n=5):
+    def recommend(self, anime_id, top_n=5):
+        index = self.data.index[self.original_data['anime_id'] == anime_id].tolist()[0]
+
         # get similarity scores for the given anime against all other animes
         similarity_scores = list(enumerate(self.__cosine_sim[index]))
 
@@ -101,6 +103,6 @@ class Recommender:
         top_indices = similarity_scores[1:top_n+1]
 
         # get the names of the top N nearest neighbors
-        top_names = [(self.data.index[i], score) for i, score in top_indices]
+        top_names = [(self.original_data['anime_id'].iloc[i], score) for i, score in top_indices]
 
         return top_names
